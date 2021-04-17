@@ -75,7 +75,7 @@ const vote = async () => {
   driver
     .wait(until.elementLocated(By.css(successCssPath)), 10000)
     .then((x) => {
-      console.log('Successfully voted.');
+      log('Successfully voted.');
       countDown(1 * 60 * 60 + 30 * 60);
       driver.quit();
     })

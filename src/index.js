@@ -1,7 +1,17 @@
 const { Builder, By, Key, until } = require('selenium-webdriver');
 const firefox = require('selenium-webdriver/firefox');
+const chalk = require('chalk');
 
 const config = require('../config.json');
+
+const log = (message) => {
+  const [start, end] = new Date()
+    .toLocaleString('fr')
+    .split('à')
+    .map((x) => x.trim());
+
+  console.log(`${chalk.blue(start + ' ' + end)} ${message}`);
+};
 
 const splitTime = (string) => {
   const h = string.split('h')[0];
@@ -22,13 +32,13 @@ const countDown = (_secs) => {
   let curr = _secs;
 
   const remaining = (secs) => {
-    console.log(formatTime(secs) + ' remaining.');
+    log(formatTime(secs) + ' remaining.');
   };
 
   const end = (interval) => {
     clearInterval(interval);
     vote();
-    console.log('Countdown finished.');
+    log('Countdown finished.');
   };
 
   remaining(curr);
@@ -44,13 +54,13 @@ const vote = async () => {
   const options = new firefox.Options();
   options.addArguments('--headless');
 
-  console.log('Opening menoria with username : ' + config.USERNAME + '.');
+  log('Opening menoria with username : ' + config.USERNAME + '.');
 
   const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build();
-  console.log('Driver created.');
+  log('Driver created.');
 
   await driver.get(config.PATH);
-  console.log('Accessing websited.');
+  log('Accessing websited.');
 
   const input = await driver.findElement(By.id('username'));
   await input.sendKeys(config.USERNAME);
@@ -65,7 +75,7 @@ const vote = async () => {
   driver
     .wait(until.elementLocated(By.css(successCssPath)), 10000)
     .then((x) => {
-      console.log('successfully voted.');
+      console.log('Successfully voted.');
       countDown(1 * 60 * 60 + 30 * 60);
       driver.quit();
     })

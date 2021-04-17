@@ -4,14 +4,17 @@ const chalk = require('chalk');
 
 const config = require('../config.json');
 
-const log = (message) => {
+const getDate = () => {
   const [start, end] = new Date()
     .toLocaleString('fr')
     .split('à')
     .map((x) => x.trim());
 
-  console.log(`${chalk.blue(start + ' ' + end)} ${message}`);
+  return `${start} ${end}`;
 };
+
+const log = (message) => console.log(`${chalk.blue(getDate())} ${message}`);
+const error = (message) => console.log(`${chalk.red(getDate())} ${message}`);
 
 const splitTime = (string) => {
   const h = string.split('h')[0];
@@ -56,15 +59,24 @@ const vote = async () => {
 
   log('Opening menoria with username : ' + config.USERNAME + '.');
 
-  const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build();
+  const driver = await new Builder()
+    .forBrowser('firefox') /* .setFirefoxOptions(options)*/
+    .build();
+
   log('Driver created.');
 
-  await driver.get(config.PATH);
-  log('Accessing websited.');
+  try {
+    await driver.get(config.PATH);
+    log('Accessing websited.');
 
-  const input = await driver.findElement(By.id('username'));
-  await input.sendKeys(config.USERNAME);
-  await input.sendKeys(Key.RETURN);
+    const input = await driver.findElement(By.id('username'));
+    await input.sendKeys(config.USERNAME);
+    await input.sendKeys(Key.RETURN);
+  } catch (err) {
+    error('Something wrong happened.');
+    countDown(60);
+    await driver.quit();
+  }
 
   const errorCssPath =
     'html body div.website-wrapper main section.page-wrapper.vote-page div.container.vote-container div.vote-main-container div.panel.vote-interface-panel div.menoria-vote-form-container div.error';

@@ -61,7 +61,7 @@ const vote = async () => {
 
   log('Opening menoria with username : ' + config.USERNAME + '.');
 
-  const driver = await new Builder().forBrowser('firefox').build();
+  const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build();
 
   log('Driver created.');
 

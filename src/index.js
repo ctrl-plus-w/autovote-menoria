@@ -20,7 +20,6 @@ const formatTime = (time) => {
 
 const countDown = (_secs) => {
   let curr = _secs;
-  let acc = 15;
 
   const remaining = (secs) => {
     console.log(formatTime(secs) + ' remaining.');
@@ -35,20 +34,23 @@ const countDown = (_secs) => {
   remaining(curr);
 
   const loop = setInterval(() => {
-    curr -= acc;
+    curr -= config.GAP;
     remaining(curr);
     if (curr <= 0) end(loop);
-  }, acc * 1000);
+  }, config.GAP * 1000);
 };
 
 const vote = async () => {
   const options = new firefox.Options();
-  options.addArguments('-headless');
+  options.addArguments('--headless');
 
   console.log('Opening menoria with username : ' + config.USERNAME + '.');
 
   const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build();
+  console.log('Driver created.');
+
   await driver.get(config.PATH);
+  console.log('Accessing websited.');
 
   const input = await driver.findElement(By.id('username'));
   await input.sendKeys(config.USERNAME);
@@ -63,7 +65,8 @@ const vote = async () => {
   driver
     .wait(until.elementLocated(By.css(successCssPath)), 10000)
     .then((x) => {
-      console.log('Success');
+      console.log('successfully voted.');
+      countDown(1 * 60 * 60 + 30 * 60);
       driver.quit();
     })
     .catch((err) => {});

@@ -20,7 +20,7 @@ const formatTime = (time) => {
 
 const countDown = (_secs) => {
   let curr = _secs;
-  let acc = 15;
+  let acc = 60;
 
   const remaining = (secs) => {
     console.log(formatTime(secs) + ' remaining.');
@@ -43,16 +43,28 @@ const countDown = (_secs) => {
 
 const vote = async () => {
   const options = new firefox.Options();
-  options.addArguments('-headless');
+  options.addArguments('--headless');
 
   console.log('Opening menoria with username : ' + config.USERNAME + '.');
 
-  const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build();
+  const driver = await new Builder()
+    .forBrowser('firefox')
+    .setFirefoxOptions(options)
+    .build();
+
+  console.log('Driver created');
   await driver.get(config.PATH);
+
+  console.log('Website opened.');
 
   const input = await driver.findElement(By.id('username'));
   await input.sendKeys(config.USERNAME);
-  await input.sendKeys(Key.RETURN);
+
+  const button = await driver.findElement(By.xpath('/html/body/div/main/section/div/div/div[1]/div/form/div[1]/div[2]/button'))
+  await button.click();
+
+  const receive = await driver.findElement(By.xpath('/html/body/div/main/section/div/div/div[1]/div/form/div[2]/button'))
+  await receive.click()
 
   const errorCssPath =
     'html body div.website-wrapper main section.page-wrapper.vote-page div.container.vote-container div.vote-main-container div.panel.vote-interface-panel div.menoria-vote-form-container div.error';
@@ -63,7 +75,8 @@ const vote = async () => {
   driver
     .wait(until.elementLocated(By.css(successCssPath)), 10000)
     .then((x) => {
-      console.log('Success');
+      console.log('Voted successfully.');
+      countDown(1 * 3600 + 30 * 60);
       driver.quit();
     })
     .catch((err) => {});

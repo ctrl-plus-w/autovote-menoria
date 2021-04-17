@@ -16,6 +16,8 @@ const getDate = () => {
 const log = (message) => console.log(`${chalk.blue(getDate())} ${message}`);
 const error = (message) => console.log(`${chalk.red(getDate())} ${message}`);
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const splitTime = (string) => {
   const h = string.split('h')[0];
   const m = string.split('h')[1].split('m')[0];
@@ -59,7 +61,7 @@ const vote = async () => {
 
   log('Opening menoria with username : ' + config.USERNAME + '.');
 
-  const driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build();
+  const driver = await new Builder().forBrowser('firefox').build();
 
   log('Driver created.');
 
@@ -69,7 +71,19 @@ const vote = async () => {
 
     const input = await driver.findElement(By.id('username'));
     await input.sendKeys(config.USERNAME);
-    await input.sendKeys(Key.RETURN);
+    log('Set username.');
+
+    const sendInput = await driver.findElement(By.css('#username-box.input-menoria-textbox.input-menoria-votebox div.input-menoria-vote-validate'));
+
+    await sleep(1000);
+    await sendInput.click();
+    log('Sent username.');
+
+    const receive = await driver.findElement(By.css('#out-box button'));
+
+    await sleep(1000);
+    await receive.click();
+    log('Received vote.');
   } catch (err) {
     error('Something wrong happened.');
     countDown(60);

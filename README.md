@@ -5,12 +5,13 @@ Website link : https://menoria.com/home
 
 ## Installation
 
-1. Download nodejs. (https://nodejs.org/en/download/)
-2. Install nodejs. (Follow the instructions)
-3. Clone/download the repo (Code > Download ZIP)
-4. Extract the zip.
-5. Open a cmd an run the command : `npm i`.
-6. Finally, edit the `config.json` file and replace "Luk4s" with your username.
+1. Download firefox. (https://www.mozilla.org/en-US/firefox/new/)
+2. Download nodejs. (https://nodejs.org/en/download/)
+3. Install nodejs. (Follow the instructions)
+4. Clone/download the repo (Code > Download ZIP)
+5. Extract the zip.
+6. Open a cmd an run the command : `npm i`.
+7. Finally, edit the `config.json` file and replace "Luk4s" with your username.
 
 ## Usage
 
